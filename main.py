@@ -4,7 +4,8 @@ from playsound import playsound
 from gtts import gTTS
 import os
 import tkinter as tk
-
+from tkinter import ttk
+from card_printer import CardPrinter
 
 class BingoApp(tk.Tk):
 	def __init__(self):
@@ -19,36 +20,60 @@ class BingoApp(tk.Tk):
 						'green': 	  "#a5a58d", 
 						'dark-green':  "#6b705c"}
 		self.configure(bg=self.colors['brown'])
-		[self.grid_rowconfigure(i, weight=1) for i in range(1)]
-		[self.grid_columnconfigure(i, weight=1) for i in range(3)]
-		self.total_numbers = 100
+		[self.grid_rowconfigure(i, weight=1) for i in range(4)]
+		[self.grid_columnconfigure(i, weight=1) for i in range(2)]
+		self.total_numbers = 80
 		self.numbers_per_row = 10
 		self.available_numbers = []
 		self.round = 0
 		self.language = 'en'
+		self.card_printer = CardPrinter(int(self.total_numbers/10))
+		self.running = True
 		self.widgets = self.get_start_menu()
 	
 	def get_start_menu(self):
-		tk.Label(self, text="Let's Play!", font=('Calibri', 45, 'bold'), bg=self.colors['brown']).pack(anchor='center', expand=True)
-		tk.Button(self, text="Start Game", font=('Calibri', 15, 'bold'), bg='white', command=lambda self=self: self.start_playing()).pack(anchor='center', expand=True)
+		tk.Label(self, text="Let's Play!", font=('Calibri', 45, 'bold'), bg=self.colors['brown']).grid(row=0, column=0, columnspan=2, sticky="nsew")
+		tk.Button(self, text="Start Game", font=('Calibri', 15, 'bold'), bg='white', command=lambda self=self: self.start_playing()).grid(row=1, column=0,  columnspan=2)
+		
+		# This menu will allow us to select the language used by the "person" calling out the numbers
+		tk.Label(self, text='Select language:').grid(row=2, column=0, sticky='s')
+		self.lang_var = tk.StringVar()
+		self.lang_var.trace('w', self.change_language)
+		self.language_cbbox = ttk.Combobox(self, values=['EN - English', 'ES - Español', 'FR - Français'], textvariable=self.lang_var)
+		self.language_cbbox.current(0)
+		self.language_cbbox.grid(row=3, column=0, sticky='n', pady=10)
+		
+		# This menu will let us select how many bingo cards we need
+		tk.Label(self, text='Select number of players:').grid(row=2, column=1, sticky='s')
+		self.players_num_cbbox = ttk.Combobox(self, values=list(range(1, 13)), width=5)
+		self.players_num_cbbox.current(1)
+		self.players_num_cbbox.grid(row=3, column=1, sticky='nw', pady=10, padx=50)
+		tk.Button(self, text='Get Bingo Cards', command= lambda self=self: self.get_bingo_cards()).grid(row=3, column=1, sticky='ne', pady=10, padx=40)
+	
+	def get_bingo_cards(self):
+		cards_num = int(self.players_num_cbbox.get())
+		self.card_printer.get_cards_html(cards_num=cards_num)
 	
 	def start_playing(self):
 		self.get_playing_screen()
 		self.after(2000, self.draw_number)
 	
-	
+	def change_language(self, *args):
+		new_lang = self.language_cbbox.get()
+		self.language = new_lang.split(' - ')[0].lower()
+
 	def clear_screen(self, frame):
 		for widget in frame.winfo_children():
 			widget.destroy()
 
 	def get_playing_screen(self):
 		self.clear_screen(self)
-		self.available_numbers = list(range(1, self.total_numbers+4))
+		self.available_numbers = list(range(1, self.total_numbers+1))
 
 		self.round_lbl = tk.Label(self, text='Round: 0', font=('Calibri', 20), bg=self.colors['brown'])
 		self.last_draw_lbl = tk.Label(self, text='Last number drawn: -', font=('Calibri', 20), bg=self.colors['brown'])
 		self.title_lbl = tk.Label(self, text='Bingo', font=('Calibri', 45), bg=self.colors['brown'])
-		self.stop_btn = tk.Button(self, text='Pause game', command=lambda:print('hello'))
+		self.stop_btn = tk.Button(self, text='Pause game', command=lambda self=self: self.pause_game(), bg='red')
 		self.numbers_frame = tk.Frame(self, bg=self.colors['brown'], height=400)
 
 		#This will make every cell within the number grid to be the same size
@@ -58,7 +83,7 @@ class BingoApp(tk.Tk):
 		self.round_lbl.grid(row=0, column=0, pady=10, padx=10)
 		self.last_draw_lbl.grid(row=0, column=4, columnspan=2, pady=10, padx=10)
 		self.title_lbl.grid(row=1, column=0, columnspan=8, pady=10, padx=10)
-		self.stop_btn.grid(row=1, column=6, columnspan=2, pady=10, padx=10)
+		self.stop_btn.grid(row=1, column=6, columnspan=2, pady=10, padx=20)
 		self.numbers_frame.grid(row=3, column=0, columnspan=12, rowspan=12, pady=10, padx=10)
 
 		# We are creating the grid where the bingo numbers will be shown
@@ -71,7 +96,16 @@ class BingoApp(tk.Tk):
 			
 			tk.Label(self.numbers_frame, text = str(i), font=('Calibri', 14, 'bold'), relief='raised').grid(row=row, column=column, ipadx=10, sticky='nsew')
 			column += 1
-		
+
+	def pause_game(self):
+		if self.stop_btn.cget('text') == 'Pause game':
+			self.running = False
+			self.stop_btn.config(text='Resume game', bg='green')
+		else:			
+			self.running = True
+			self.stop_btn.config(text='Pause game', bg='red')
+			self.after(1000, self.draw_number)
+
 	
 	def update_lbl(self, label, new_value):
 		current_text = label.cget('text')
@@ -95,9 +129,12 @@ class BingoApp(tk.Tk):
 				self.update_idletasks()
 				self.available_numbers.remove(number)
 		
-		self.after(2000, self.draw_number)
+		if self.running:
+			self.after(1000, self.draw_number)
 
-		
+
+
+
 	def call_out_number(self, number):
 		mp3_name = 'number.mp3'
 		
