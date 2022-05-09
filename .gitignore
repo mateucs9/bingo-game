@@ -1,1 +1,2 @@
-exclude *.git
+*.git
+*.pdf
