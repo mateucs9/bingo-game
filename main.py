@@ -27,7 +27,7 @@ class BingoApp(tk.Tk):
 		self.available_numbers = []
 		self.round = 0
 		self.language = 'en'
-		self.card_printer = CardPrinter(int(self.total_numbers/10))
+		self.card_printer = CardPrinter(int(self.total_numbers/10)-1)
 		self.running = True
 		self.widgets = self.get_start_menu()
 	
@@ -81,7 +81,7 @@ class BingoApp(tk.Tk):
 		[self.numbers_frame.grid_columnconfigure(i, weight=1) for i in range(self.numbers_per_row)]
 		
 		self.round_lbl.grid(row=0, column=0, pady=10, padx=10)
-		self.last_draw_lbl.grid(row=0, column=4, columnspan=2, pady=10, padx=10)
+		self.last_draw_lbl.grid(row=0, column=3, columnspan=3, pady=10, padx=10)
 		self.title_lbl.grid(row=1, column=0, columnspan=8, pady=10, padx=10)
 		self.stop_btn.grid(row=1, column=6, columnspan=2, pady=10, padx=20)
 		self.numbers_frame.grid(row=3, column=0, columnspan=12, rowspan=12, pady=10, padx=10)

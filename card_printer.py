@@ -25,10 +25,10 @@ class CardPrinter():
 		]
 
 	def get_cards_html(self, cards_num):
-		html = "<div style='margin-bottom:120px;'>"
+		html = "<div style='margin-bottom:120px; margin-left: 60px;'>"
 		count = 1
 		for i in range(cards_num):
-			data = np.zeros(shape=(3, 8))
+			data = np.zeros(shape=(3, self.columns))
 			for col in range(1, self.columns+1):
 				empty_cell = int(random()*(self.rows-1))
 				num_range = list(range(col*10+1, col*10+10))
@@ -51,7 +51,7 @@ class CardPrinter():
 			html += '</table></div>'
 			if count == self.cards_per_sheet:
 				count = 0
-				html += "</div><div style='margin-bottom:120px;'>"
+				html += "</div><div style='margin-bottom:120px; margin-left: 60px;'>"
 			
 			count += 1
 
