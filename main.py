@@ -30,6 +30,7 @@ class BingoApp(tk.Tk):
 		self.card_printer = CardPrinter(int(self.total_numbers/10)-1)
 		self.running = True
 		self.widgets = self.get_start_menu()
+		
 	
 	def get_start_menu(self):
 		tk.Label(self, text="Let's Play!", font=('Calibri', 45, 'bold'), bg=self.colors['brown']).grid(row=0, column=0, columnspan=2, sticky="nsew")

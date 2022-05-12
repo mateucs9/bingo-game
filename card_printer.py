@@ -24,6 +24,8 @@ class CardPrinter():
 			'text-align: center'
 		]
 
+		self.wkhtml_path = pdfkit.configuration(wkhtmltopdf = "wkhtmltopdf.exe")
+
 	def get_cards_html(self, cards_num):
 		html = "<div style='margin-bottom:120px; margin-left: 60px;'>"
 		count = 1
@@ -63,7 +65,7 @@ class CardPrinter():
 		html_file.close()
 
 		# This will create pdf from the html and we will use os to open it with the default program ready to be printed
-		pdfkit.from_file(self.html_name, self.pdf_name, options = {"enable-local-file-access": None})
+		pdfkit.from_file(self.html_name, self.pdf_name, configuration= self.wkhtml_path)
 		os.startfile(self.pdf_name, 'open')
 
 		os.remove(self.html_name)
