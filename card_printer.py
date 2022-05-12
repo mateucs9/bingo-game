@@ -65,7 +65,7 @@ class CardPrinter():
 		html_file.close()
 
 		# This will create pdf from the html and we will use os to open it with the default program ready to be printed
-		pdfkit.from_file(self.html_name, self.pdf_name, configuration= self.wkhtml_path)
+		pdfkit.from_file(self.html_name, self.pdf_name, configuration= self.wkhtml_path, options = {"enable-local-file-access": None})
 		os.startfile(self.pdf_name, 'open')
 
 		os.remove(self.html_name)
