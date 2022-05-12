@@ -24,7 +24,7 @@ class CardPrinter():
 			'text-align: center'
 		]
 
-		self.wkhtml_path = pdfkit.configuration(wkhtmltopdf = "wkhtmltopdf.exe")
+		self.wkhtml_path = pdfkit.configuration(wkhtmltopdf = os.path.dirname(__file__)+"/wkhtmltopdf.exe")
 
 	def get_cards_html(self, cards_num):
 		html = "<div style='margin-bottom:120px; margin-left: 60px;'>"

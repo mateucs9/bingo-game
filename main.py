@@ -139,9 +139,6 @@ class BingoApp(tk.Tk):
 		if self.running:
 			self.after(1000, self.draw_number)
 
-
-
-
 	def call_out_number(self, number):
 		mp3_name = 'number.mp3'
 		
@@ -157,9 +154,6 @@ class BingoApp(tk.Tk):
 			voice.save(mp3_name)
 			playsound(mp3_name)
 			os.remove(mp3_name)
-
-
-		
 
 app = BingoApp()
 app.mainloop()
