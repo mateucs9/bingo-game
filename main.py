@@ -23,7 +23,7 @@ class BingoApp(tk.Tk):
 		self.configure(bg=self.colors['brown'])
 		self.large_font = int(72/750*self.size)
 		self.medium_font = int(45/750*self.size)
-		self.small_font = int(24/750*self.size)
+		self.small_font = int(20/750*self.size)
 		[self.grid_rowconfigure(i, weight=1) for i in range(4)]
 		[self.grid_columnconfigure(i, weight=1) for i in range(2)]
 		self.total_numbers = 80
